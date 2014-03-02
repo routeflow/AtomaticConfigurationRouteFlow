@@ -9,8 +9,8 @@ Software Overview
 This software contains five different components:
 
 1. RF-controller: It runs RouteFlow without any manual configuration of VMs (Linux Containers, LXCs).
-2. Topology controller: It contains a small part of configurations from an administrator and runs a topology discovery module.
-The configuration required from the administrator is:
+2. Topology controller: It runs a topology discovery module and requires very little manual configurations.
+An administrator can provide following manual configurations to the topology controller:
 
   a) Range of IP addresses for the virtual environment: With this option, the administrator can specify the range of IP addresses (minimum IP address, maximum IP address, network mask address, broadcast network address, and broadcast address) for the virtual environment, which mirrors the physical topology. When the topology discovery module discovers an OpenFlow link, the module chooses the IP addresses for the link from this range of IP addresses.
 
