@@ -46,7 +46,7 @@ RouteFlow runs on Ubuntu 12.04.
 
 1.  Install the dependencies:
 
-  sudo apt-get install build-essential git libboost-dev libboost-program-options-dev libboost-thread-dev libboost-filesystem-dev iproute-dev openvswitch-switch mongodb python-pymongo ant openjdk-6-jdk python-pexpect
+  sudo apt-get install build-essential git libboost-dev libboost-program-options-dev libboost-thread-dev libboost-filesystem-dev iproute-dev openvswitch-switch mongodb python-pymongo ant openjdk-6-jdk python-pexpect python-ipaddr
 
 2. Clone RouteFlow automatic configuration repository from the GitHub:
    
