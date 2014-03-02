@@ -15,7 +15,7 @@ This software contains five different components:
 
   b) Type of protocol: With this option, the administrator can specify the type of protocol (e.g. OSPF, BGP etc) that needs to run in the virtual environment. Note that this software currently works only for OSPF. The work to make it working for other protocols is in progress.
 
-  c) IP addresses for the non-OpenFlow links: In OpenFlow networks, some of the ports of an OpenFlow switch can be connected to hosts or switches, which are not controlled by the same controllers. The administrator can assign  addresses to those ports using this option.
+  c) IP addresses for the non-OpenFlow links: In OpenFlow networks, some of the ports of an OpenFlow switch can be connected to hosts or switches, which are not controlled by the same controller. The administrator can assign  addresses to those ports using this option.
 
   d) IP addresses for the control interfaces of the virtual environment: With this option, the administrator can specify the range of IP addresses for the control interfaces of the virtual machines (e.g. LXCs). When the topology controller discovers a switch, it chooses the control IP address of the corresponding VM from this range of IP addresses. 
   
