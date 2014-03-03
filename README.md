@@ -1,154 +1,64 @@
-# Welcome
-This version of RouteFlow is a beta developers' release intended to evaluate RouteFlow for providing virtualized IP routing services on one or more OpenFlow switches.
+Automatic Conﬁguration of Routing Control Platforms (RouteFlow) in OpenFlow Networks 
+==============================
 
-You can learn more about RouteFlow in our [main page in GitHub](http://cpqd.github.com/RouteFlow/) and in our [website](https://sites.google.com/site/routeflow/).
+This software automatically generates the virtual environment proposed for RouteFlow. The software is a modified version of RouteFlow (https://github.com/CPqD/RouteFlow/). 
 
-Please be aware of POX, OpenFlow, Open vSwitch, Quagga, MongoDB, jQuery, JIT and RouteFlow licenses and terms.
+Software Overview
+==============================
 
-# Distribution overview
-RouteFlow is a distribution composed by three basic applications: RFClient, RFServer and RFProxy.
+This software contains five different components:
 
-* RFClient runs as a daemon in the Virtual Machine (VM), detecting changes in the Linux ARP and routing tables. Routing information is sent to the RFServer when there's an update.
+1. RF-controller: It runs RouteFlow without any manual configuration of VMs (Linux Containers, LXCs).
+2. Topology controller: It contains a small part of configurations from an administrator and runs a topology discovery module.
+The configuration required from the administrator is:
 
-* RFServer is a standalone application that manages the VMs running the RFClient daemons. The RFServer keeps the mapping between the RFClient VM instances and interfaces and the corresponding switches and ports. It connects to RFProxy to instruct it about when to configure flows and also to configure the Open vSwitch to maintain the connectivity in the virtual environment formed by the set of VMs.
+  a) Range of IP addresses for the virtual environment: With this option, the administrator can specify the range of IP addresses (minimum IP address, maximum IP address, network mask address, broadcast network address, and broadcast address) for the virtual environment, which mirrors the physical topology. When the topology discovery module discovers an OpenFlow link, the module chooses the IP addresses for the link from this range of IP addresses.
 
-* RFProxy is an application (for POX and other controllers) responsible for the interactions with the OpenFlow switches (identified by datapaths) via the OpenFlow protocol. It listens to instructions from the RFServer and notifies it about events in the network. We recommend running POX when you are experimenting and testing your network. Other implementations in different controllers will be available soon.
+  b) Type of protocol: With this option, an administrator can specify the type of protocol (e.g. OSPF, BGP etc) that needs to run in the virtual environment. Note that this software currently only works for OSPF. The work to make it working for other protocols is in progress.
 
-There is also a library of common functions (rflib). It has implementations of the IPC, utilities like custom types for IP and MAC addresses manipulation and OpenFlow message creation.
+  c) IP addresses for the non-OpenFlow links: In OpenFlow networks, some of the ports of an OpenFlow switch can be connected to hosts or switches, which are not controlled by the same controllers. The administrator can assign  addresses to those ports using this option.
 
-Additionally, there's `rfweb`, an extra module that provides an web interface for RouteFlow.
+  d) IP addresses for the control interfaces of the virtual environment: With this option, the administrator can specify the range of IP addresses for the control interfaces of the virtual machines (e.g. LXCs). When the topology controller discovers a switch, it chooses the control IP address of the corresponding VM from this range of IP addresses. 
+  
+   In addition, the administrator can specify the address of the RPC server (please see the next components)
+   
+3. RPC (remote procedural call) client: It collects configuration information from the topology controller
+and sends this to a server called RPC server.
+4. RPC server: It resides in the RF-controller and configures RouteFlow on reception of configuration messages from
+the RPC client.
 
-```
-The RouteFlow Architecture
+5. FlowVisor: It acts as a proxy server between a switch and controllers (the topology controller and the RF-controller in our framework).
 
-+--------VM---------+
-| Quagga | RFClient |
-+-------------------+
-         \
-M:1      \ RFProtocol
-         \
-+-------------------+
-|     RFServer      |
-+-------------------+
-         \
-1:1      \ RFProtocol
-         \
-+-------------------+
-|      RFProxy      |
-|-------------------|
-|    Controller     |
-+-------------------+
-         \
-1:N      \ OpenFlow Protocol
-         \
-+-------------------+
-|  OpenFlow Switch  |
-+-------------------+
-```
 
-# Building
+For more information, please go through the following paper:
 
+ Sachin Sharma, Dimitri Staessens, Didier Colle, Mario Pickavet and Piet Demeester, Automatic conﬁguration of routing control platforms in OpenFlow networks, ACM SIGCOMM, Vol. 43(4), pp. 491-492, 2013
+ 
+ 
+Building
+==============================
 RouteFlow runs on Ubuntu 12.04.
 
-1. Install the dependencies:
-```
-sudo apt-get install build-essential git libboost-dev \
-  libboost-program-options-dev libboost-thread-dev \
-  libboost-filesystem-dev iproute-dev openvswitch-switch \
-  mongodb python-pymongo
-```
+1.  Install the dependencies:
 
-2. Clone RouteFlow's repository on GitHub:
-```
-$ git clone git://github.com/CPqD/RouteFlow.git
-```
+  sudo apt-get install build-essential git libboost-dev libboost-program-options-dev libboost-thread-dev libboost-filesystem-dev iproute-dev openvswitch-switch mongodb python-pymongo ant openjdk-6-jdk python-pexpect
 
-3. Build `rfclient`
-```
-make rfclient
-```
+2. Clone RouteFlow automatic configuration repository from the GitHub:
+   
+   git clone   ...
 
-That's it! Now you can run tests 1 and 2. The setup to run them is described in the "Running" section.
+3. build rfclient:
 
-# Running
-The folder rftest contains all that is needed to create and run two test cases.
+   cd "the cloned directory"
+   
+   make rfclient
 
-## Virtual environment
-First, create the default LXC containers that will run as virtual machines:
-```
-$ cd rftest
-$ sudo ./create
-```
-The containers will have a default ubuntu/ubuntu user/password combination. **You should change that if you plan to deploy RouteFlow**.
+4. build flowvisor
 
-By default, the tests below will use the LXC containers created  by the `create` script. You can use other virtualization technologies. If you have experience with or questions about setting up RouteFlow on a particular technology, contact us! See the "Support" section.
-
-## Test cases
-
-Default configuration files are provided for these tests in the `rftest` directory (you don't need to change anything).
-You can stops them at any time by pressing CTRL+C.
-
-### rftest1
-1. Run:
-```
-$ sudo ./rftest1
-```
-
-2. You can then log in to the LXC container b1 and try to ping b2:
-```
-$ sudo lxc-console -n b1
-```
-
-3. Inside b1, run:
-```
-# ping 172.31.2.2
-```
-
-For more details on this test, see its [tutorial](https://github.com/CPqD/RouteFlow/wiki/Tutorial-1:-rftest1).
-
-### rftest2
-This test should be run with a [Mininet](http://mininet.org/) simulated network.
-In the steps below, replace [guest address] with the IP address you use to access your Mininet VM.
-The same applies to [host address], that should be the address to access the host from inside the VM.
-
-1. Run:
-```
-$ sudo ./rftest2
-```
-
-2. Once you have a Mininet VM up and running, copy the network topology files in rftest to the VM:
-```
-$ scp topo-4sw-4host.py mininet@[guest address]:/home/mininet/mininet/custom
-$ scp ipconf mininet@[guest address]:/home/mininet
-```
-
-3. Then start the network:
-```
-$ sudo mn --custom mininet/custom/topo-4sw-4host.py --topo=rftest2 --controller=remote,ip=[host address],port=6633 --pre=ipconf
-```
-
-Wait for the network to converge (it should take a few seconds), and try to ping:
-```
-mininet> pingall
-...
-mininet> h2 ping h3
-```
-
-For more details on this test, see its [tutorial](https://github.com/CPqD/RouteFlow/wiki/Tutorial-2:-rftest2).
+   cd flowvisor
+   
+   make
+   
+   
 
 
-# Now what?
-If you want to use the web interface to inspect RouteFlow behavior, see the wiki page on [rfweb](https://github.com/CPqD/RouteFlow/wiki/The-web-interface).
-
-If you want to create your custom configurations schemes for a given setup, check out the [configuration section of the first tutorial](https://github.com/CPqD/RouteFlow/wiki/Tutorial-1:-rftest1#configuration-file) and the guide on [how to create your virtual environment](https://github.com/CPqD/RouteFlow/wiki/Virtual-environment-creation).
-
-If you're developing for RouteFlow, there are more advanced options and components that can be installed through the `build.sh` script. See its [source](https://github.com/CPqD/RouteFlow/blob/master/build.sh) for more information.
-
-
-# Support
-If you want to know more or need to contact us regarding the project for anything (questions, suggestions, bug reports, discussions about RouteFlow and SDN in general) you can use the following resources:
-* RouteFlow repository [wiki](https://github.com/CPqD/RouteFlow/wiki) and [issues](https://github.com/CPqD/RouteFlow/issues) in GitHub
-
-* Google Groups [mailing list](http://groups.google.com/group/routeflow-discuss?hl=en_US)
-
-_RouteFlow - Copyright (c) 2012 CPqD_
