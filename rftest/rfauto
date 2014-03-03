@@ -116,7 +116,7 @@ chroot  "$LXCDIR"/base/rootfs apt-get -y --force-yes install quagga libboost-thr
 
 trap "reset 0; exit 0" INT
 #running flowvisor
-flowvisor/scripts/flowvisor.sh flowvisor/config.xml &
+FLOWVISOR/scripts/flowvisor.sh flowvisor/config.xml &
 sleep 5
 echo_bold "-> Setting up the management bridge (lxcbr0)..."
 ifconfig lxcbr0 192.169.1.1 up
@@ -145,7 +145,7 @@ ovs-vsctl set Bridge dp0 other-config:datapath-id=7266767372667673
 ovs-vsctl set-controller dp0 tcp:127.0.0.1:$CONTROLLER_PORT
 sleep 2
 # Staring POX controller for discovery
-cd POX
+cd POX_CONTROLLER
  ./pox.py openflow.of_01  --port=6634 openflow.discovery &
 
 echo_bold "---"
