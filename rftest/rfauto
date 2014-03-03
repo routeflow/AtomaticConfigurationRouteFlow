@@ -1,0 +1,162 @@
+#!/bin/bash
+
+if [ "$EUID" != "0" ]; then
+  echo "You must be root to run this script."
+  exit 1
+fi
+
+SCRIPT_NAME="rfauto"
+LXCDIR=/var/lib/lxc
+MONGODB_CONF=/etc/mongodb.conf
+MONGODB_PORT=27017
+CONTROLLER_PORT=6633
+RF_HOME=..
+LXDIR=/var/lib/lxc
+export PATH=$PATH:/usr/local/bin:/usr/local/sbin
+export PYTHONPATH=$PYTHONPATH:$RF_HOME
+
+cd $RF_HOME
+
+wait_port_listen() {
+    port=$1
+    while ! `nc -z localhost $port` ; do
+        echo -n .
+        sleep 1
+    done
+}
+
+echo_bold() {
+    echo -e "\033[1m${1}\033[0m"
+}
+
+kill_process_tree() {
+    top=$1
+    pid=$2
+
+    children=`ps -o pid --no-headers --ppid ${pid}`
+
+    for child in $children
+    do
+        kill_process_tree 0 $child
+    done
+
+    if [ $top -eq 0 ]; then
+        kill -9 $pid &> /dev/null
+    fi
+}
+
+reset() {
+
+    init=$1;
+    if [ $init -eq 1 ]; then
+        echo_bold "-> Starting $SCRIPT_NAME";
+    else
+        echo_bold "-> Stopping child processes...";
+        kill_process_tree 1 $$
+    fi
+
+    ovs-vsctl del-br dp0 &> /dev/null;
+    ovs-vsctl emer-reset &> /dev/null;
+    ovs-vsctl del-br dp0 
+
+    echo_bold "-> Stopping and resetting LXC VMs...";
+    for rfvm in $(lxc-ls); do
+	lxc-stop -n $rfvm
+	while true
+        do
+            if lxc-info -q -n "$vm" | grep -q "STOPPED"; then
+                break;
+            fi
+            echo -n .
+            sleep 1
+        done
+
+        lxc-shutdown -n $rfvm;
+    done
+
+    echo_bold "-> Deleting (previous) run data...";
+    mongo db --eval "
+        db.getCollection('rftable').drop(); 
+        db.getCollection('rfconfig').drop(); 
+        db.getCollection('rfstats').drop(); 
+        db.getCollection('rfclient<->rfserver').drop(); 
+        db.getCollection('rfserver<->rfproxy').drop();
+    "
+    for rfvm in $(lxc-ls); do
+    	rm -rf /var/lib/lxc/$rfvm/rootfs/opt/rfclient;
+    done
+    sleep 10
+    echo "Removing data base *****"
+    for rfvm in $(lxc-ls); do
+	lxc-stop -n $rfvm
+    done 
+	init=$1;
+    if [ $init -eq 1 ]; then
+        echo_bold "-> Starting $SCRIPT_NAME";
+    else
+        echo_bold "-> Stopping child processes...";
+        kill_process_tree 1 $$
+    fi
+    killall python2.7 java
+
+}
+
+reset 1
+#creating base lxc
+lxc-create -t ubuntu -n base
+#updating shadow file to login into a directory without root password
+sed '/root/d' "$LXDIR"/base/rootfs/etc/shadow > "$LXDIR"/base/rootfs/etc/shadow  
+echo "root:::0:99999:7:::" >> "$LXDIR"/base/rootfs/etc/shadow	
+#updating rootfs
+
+chroot   "$LXCDIR"/base/rootfs apt-get update
+
+#install quagga and required utilities
+chroot  "$LXCDIR"/base/rootfs apt-get -y --force-yes install quagga libboost-thread-dev libboost-system-dev libboost-filesystem-dev libboost-program-options-dev rsyslog vlan tcpdump
+
+trap "reset 0; exit 0" INT
+#running flowvisor
+flowvisor/scripts/flowvisor.sh flowvisor/config.xml &
+sleep 5
+echo_bold "-> Setting up the management bridge (lxcbr0)..."
+ifconfig lxcbr0 192.169.1.1 up
+
+# Starting MongoDB
+
+echo_bold "-> Setting up MongoDB..."
+sed -i "/bind_ip/c\bind_ip = 127.0.0.1,192.169.1.1" $MONGODB_CONF
+mongod -f /etc/mongodb.conf &
+service mongodb restart
+wait_port_listen $MONGODB_PORT
+
+# Starting RFPROXY
+echo_bold "-> Starting the controller and RFPRoxy..."
+cd pox
+./pox.py log.level --=INFO  topology openflow.topology  openflow.discovery rfproxy  rfstats &
+cd ..
+wait_port_listen $CONTROLLER_PORT
+
+echo_bold "-> Starting RFServer..."
+rm -rf rftest/CONF_FILE
+ ./rfserver/rfserver.py  rftest/rftest2config.csv -a 127.0.0.1 -p 8000 &
+echo_bold "-> Starting the control plane network (dp0 VS)..."
+ovs-vsctl add-br dp0
+ovs-vsctl set Bridge dp0 other-config:datapath-id=7266767372667673
+ovs-vsctl set-controller dp0 tcp:127.0.0.1:$CONTROLLER_PORT
+sleep 2
+# Staring POX controller for discovery
+cd POX
+ ./pox.py openflow.of_01  --port=6634 openflow.discovery &
+
+echo_bold "---"
+echo_bold "This test is up and running."
+echo_bold "Start Mininet:"
+echo_bold "  $ sudo mn --custom mininet/custom/topo-4sw-4host.py --topo=rftest2"
+echo_bold "    --controller=remote,ip=[host address],port=6633 --pre=ipconf"
+echo_bold "Replace [host address] with the address of this host's interface "
+echo_bold "connected to the Mininet VM."
+echo_bold "Then try pinging everything:"
+echo_bold "  mininet> pingall"
+echo_bold "You can stop this test by pressing CTRL+C."
+echo_bold "---"
+wait
