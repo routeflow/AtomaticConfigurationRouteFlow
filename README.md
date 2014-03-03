@@ -60,7 +60,7 @@ RouteFlow runs on Ubuntu 12.04.
 
 4. build flowvisor
 
-   cd flowvisor
+   cd FLOWVISOR
    
    make
    
