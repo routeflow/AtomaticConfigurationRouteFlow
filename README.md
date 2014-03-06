@@ -13,7 +13,7 @@ This software contains five different components:
 
   a) Range of IP addresses for the virtual environment: With this option, the administrator can specify the range of IP addresses (minimum and maximum IP address) for the virtual environment. When the topology discovery module discovers an OpenFlow link, the module chooses the IP addresses of the corresponding ports in the virtual environment from this range of IP addresses.
 
-  b) Type of protocol: With this option, the administrator can specify the type of protocol (e.g. OSPF, BGP etc) that needs to run in the virtual environment. Note that this software currently works only for OSPF. The work to make it working for other protocols is in progress.
+  b) Protocol Specific Parameters: With this option, the administrator can specify the type of protocol (e.g. OSPF, BGP etc) that needs to run in the virtual environment. In addition, the administration can also specify the OSPF network address, the hello interval, and the router dead interval. Note that this software currently works only for OSPF. The work to make it working for other protocols is in progress.
 
   c) IP addresses for the non-OpenFlow links: In OpenFlow networks, some of the ports of an OpenFlow switch can be connected to hosts or switches, which are not controlled by the same controller. The administrator can assign  addresses to those ports using this option.
 
@@ -42,7 +42,7 @@ The other papers using this automatic configuration framework:
 
 Building
 ==============================
-RouteFlow runs on Ubuntu 12.04.
+Automatic Configuration of RouteFlow is currently tested on Ubuntu 12.04.
 
 1.  Install the dependencies:
 
@@ -64,6 +64,48 @@ RouteFlow runs on Ubuntu 12.04.
    
    make
    
+Steps to run Automatic Configuration
+==============================
+
+Before running RouteFlow, we need to write a configuration file for the topology controller, as described in Section "Software Overview". A sample file (CONFFILE) is present in folder POX_CONTROLLER.
+
+    RPCSERVER,http,127.0.0.1,8000,
+    IPADDRESS_RANGE,172.0.10.1,255.255.255.0,172.100.10.2,255.255.255.0
+    CONT_IP_ADDRESS,192.169.1.101,255.255.255.0,192.169.1.255,255.255.255.0
+    PROTOCOL,OSPF,ZEBRA,OSPF,OSPF
+    OSPF_PARAMETERS,172.0.0.0,8,10,40
+    SDPID,00-00-00-00-00-01,1,172.168.1.1,24
+    SDPID,00-00-00-00-00-02,1,172.168.2.1,24
+    SDPID,00-00-00-00-00-03,1,172.168.3.1,24
+    SDPID,00-00-00-00-00-04,1,172.168.4.1,24
+    SDPID,00-00-00-00-00-05,1,172.168.5.1,24
+    SDPID,00-00-00-00-00-06,1,172.168.6.1,24
+
+1. The RPCSERVER line gives the information about about RPCSERVER i.e. IP Address, port number etc. 
+2. The IP ADDRESS_RANGE line gives the range of IP addresses from which IP addresses for an OpenFlow link (both ports of the link) will be chosen.
+3. The CONT_IP_ADDRESS line gives the range of IP addresses from which an IP address for the control interface of a VM (LXC) will be chosen.
+4. The PROTOCOL line gives the information about the protocols that need to run in an OpenFlow network e.g. OSPF, ZEBRA etc.
+5. The OSPF_PARAMETER line gives the information about OSPF parameters such as OSPF network address, network mask length, hello interval, and router dead interval.
+6. The SPID line gives the information about the external links connected with the OpenFlow network. For example, the first SPID line tells the topology controller that the first port of dpid 00-00-00-00-00-01 should have an IP address 172.168.1.1/24 
+
+
+After writing the above configuration, we can run a script (called as rfauto) provided in the rftest folder:
+
+sudo ./rfauto
+
+This script will automatically run flowvisor, topology controller and routeflow.
+
+For the flowvisor, config.xml is present in folder FLOWVISOR. It creates two slices: one for RouteFlow and the other for Topology Controller. With this config file, flowvisor listens on 6600. For the slices information, you can run the following command: ./scripts/fvctl.sh listSlices or any other command listed in http://archive.openflow.org/wk/index.php/OpenFlowGEC9Tutorial#Slice_your_network.
+
+
+After these steps, you can start an OpenFlow network either using mininet or using a physical network. Please keep in mind that as flowvisor in above config file listens on 6600, please specify the controller port number as 6600 in the mininet or in the physical network. You can ofcourse change this number (if required).
+
+
+
+
+
+
+
    
 
 
