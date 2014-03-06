@@ -1,7 +1,7 @@
 Automatic Conﬁguration of Routing Control Platforms (RouteFlow) in OpenFlow Networks 
 ==============================
 
-This software automatically generates the virtual environment proposed for RouteFlow. The software is a modified version of RouteFlow (https://github.com/CPqD/RouteFlow/). This code is contributed by Minds / Ghent University. Please report at Sachin.Sharma@intec.ugent.be, if you find any bug related to this code.
+This software automatically generates the virtual environment proposed for RouteFlow. The software is a modified version of RouteFlow (https://github.com/CPqD/RouteFlow/). This code is contributed by iMinds / Ghent University. Please report at Sachin.Sharma@intec.ugent.be, if you find any bug related to this code.
 
 Papers for Reference
 ================================
