@@ -70,7 +70,7 @@ Automatic Configuration of RouteFlow is currently tested on Ubuntu 12.04.
 Steps to run Automatic Configuration
 ==============================
 
-Before running RouteFlow, we need to write a configuration file for the topology controller, as described in Section "Software Overview". A sample file (CONFFILE) is present in folder POX_CONTROLLER.
+Before running RouteFlow, we need to write a configuration file for the topology controller, as described in Section "Software Overview". A sample file (CONFFILE) is present in folder POX_CONTROLLER:
 
     RPCSERVER,http,127.0.0.1,8000,
     IPADDRESS_RANGE,172.0.10.1,255.255.255.0,172.100.10.2,255.255.255.0
