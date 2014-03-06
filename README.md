@@ -103,6 +103,8 @@ For the flowvisor, config.xml is present in folder FLOWVISOR. It creates two sli
 
 After these steps, you can start an OpenFlow network either using mininet or using a physical network. Please keep in mind that as flowvisor in above config file listens on 6600, please specify the controller port number as 6600 in the mininet or in the physical network. You can ofcourse change this number (if required).
 
+For login into lxcs(vm), username is "root" and no password is required.
+
 
 
 
