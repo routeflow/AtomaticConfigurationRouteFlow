@@ -98,7 +98,7 @@ sudo ./rfauto
 
 This script will automatically run flowvisor, topology controller and routeflow.
 
-For the flowvisor, config.xml is present in folder FLOWVISOR. It creates two slices: one for RouteFlow and the other for Topology Controller. With this config file, flowvisor listens on 6600. For the slices information, you can run the following command: ./scripts/fvctl.sh listSlices or any other command listed in http://archive.openflow.org/wk/index.php/OpenFlowGEC9Tutorial#Slice_your_network.
+For the flowvisor, config.xml is present in folder FLOWVISOR. It creates two slices: one for RouteFlow and other for Topology Controller. With this config file, flowvisor listens on 6600. For the slices information, you can run the following command: ./scripts/fvctl.sh listSlices or any other command listed in http://archive.openflow.org/wk/index.php/OpenFlowGEC9Tutorial#Slice_your_network.
 
 
 After these steps, you can start an OpenFlow network either using mininet or using a physical network. Please keep in mind that as flowvisor in above config file listens on 6600, please specify the controller port number as 6600 in the mininet or in the physical network. You can ofcourse change this number (if required).
