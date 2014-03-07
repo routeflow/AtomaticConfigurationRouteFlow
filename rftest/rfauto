@@ -116,7 +116,7 @@ chroot  "$LXCDIR"/base/rootfs apt-get -y --force-yes install quagga libboost-thr
 
 trap "reset 0; exit 0" INT
 #running flowvisor
-FLOWVISOR/scripts/flowvisor.sh flowvisor/config.xml &
+FLOWVISOR/scripts/flowvisor.sh FLOWVISOR/config.xml &
 sleep 5
 echo_bold "-> Setting up the management bridge (lxcbr0)..."
 ifconfig lxcbr0 192.169.1.1 up
