@@ -12,7 +12,9 @@ For more information, please go through the following paper:
  
 The other paper using this automatic configuration framework:
 
-[1] Sachin Sharma, Dimitri Staessens, Didier Colle, David Palma, Joao Goncalves, Mario Pickavet, Luis Cordeiro, and Piet Demeester, Demonstrating Resilient Quality of Service in Software Deﬁned Networking, IEEE INFOCOM, 2014 (demo paper)
+[1] Sachin Sharma, Dimitri Staessens, Didier Colle, David Palma, Joao Goncalves, Mario Pickavet, Luis Cordeiro, and Piet Demeester, Demonstrating Resilient Quality of Service in Software Deﬁned Networking, IEEE INFOCOM, pp. 133-134, 2014 (demo paper)
+[2] Sachin Sharma, Dimitri Staessens, Didier Colle, David Palma, Joao Goncalves, Ricardo Figueiredo, Donal Morris, Mario Pickavet and Piet Demeester, Implementing Quality of Service for the Software Defined Networking Enabled Future Internet, EWSDN, 2014 
+[3] Joao Goncalves, David Palma, Luís Cordeiro, Sachin Sharma, Didier Colle and Adam Carter, Software-Defined Networking: Guidelines for Experimentation and Validation in Large-Scale Real World Scenarios, 3rd Workshop on Intelligent Innovative Ways for Video-to-Video Communications in Modern Smart Cities, 2014
 
 
 Software Overview
