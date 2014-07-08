@@ -10,7 +10,7 @@ For more information, please go through the following paper:
 [1] Sachin Sharma, Dimitri Staessens, Didier Colle, Mario Pickavet and Piet Demeester, Automatic conﬁguration of routing control platforms in OpenFlow networks, ACM SIGCOMM, Vol. 43(4), pp. 491-492, 2013 (demo paper)
  
  
-The other paper using this automatic configuration framework:
+The other papers using this automatic configuration framework:
 
 [1] Sachin Sharma, Dimitri Staessens, Didier Colle, David Palma, Joao Goncalves, Mario Pickavet, Luis Cordeiro, and Piet Demeester, Demonstrating Resilient Quality of Service in Software Deﬁned Networking, IEEE INFOCOM, pp. 133-134, 2014 (demo paper)
 
