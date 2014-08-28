@@ -1,7 +1,7 @@
 Automatic Conﬁguration of Routing Control Platforms (RouteFlow) in OpenFlow Networks 
 ==============================
 
-This software automatically generates the virtual environment proposed for RouteFlow. The software is a modified version of RouteFlow (https://github.com/CPqD/RouteFlow/). This code is contributed by iMinds - Ghent University. For any question or bug, please report at Sachin.Sharma@intec.ugent.be.
+This software automatically generates the virtual environment proposed for RouteFlow. The software is a modified version of RouteFlow (https://github.com/CPqD/RouteFlow/). This code is contributed by iMinds - Ghent University. The code is written in the part of work performed in the CityFlow project (www.cityflow.eu). For any question or bug, please report at Sachin.Sharma@intec.ugent.be.
 
 Papers for Reference
 ================================
@@ -12,7 +12,7 @@ For more information, please go through the following paper:
  
 The other papers using this automatic configuration framework:
 
-[1] Sachin Sharma, Dimitri Staessens, Didier Colle, David Palma, Joao Goncalves, Mario Pickavet, Luis Cordeiro, and Piet Demeester, Demonstrating Resilient Quality of Service in Software Deﬁned Networking, IEEE INFOCOM, pp. 133-134, 2014 (demo paper)
+[1] Sachin Sharma, Dimitri Staessens, Didier Colle, David Palma, Joao Goncalves, Mario Pickavet, Luis Cordeiro, and Piet Demeester, Demonstrating Resilient Quality of Service in Software Deﬁned Networking, IEEE INFOCOM, pp. 133-134, 2014 
 
 [2] Sachin Sharma, Dimitri Staessens, Didier Colle, David Palma, Joao Goncalves, Ricardo Figueiredo, Donal Morris, Mario Pickavet and Piet Demeester, Implementing Quality of Service for the Software Defined Networking Enabled Future Internet, EWSDN, 2014 
 
