@@ -7,7 +7,7 @@ Papers for Reference
 ================================
 For more information, please go through the following paper:
 
-[1] Sachin Sharma, Dimitri Staessens, Didier Colle, Mario Pickavet and Piet Demeester, Automatic conﬁguration of routing control platforms in OpenFlow networks, ACM SIGCOMM, Vol. 43(4), pp. 491-492, 2013 (demo paper)
+[1] Sachin Sharma, Dimitri Staessens, Didier Colle, Mario Pickavet and Piet Demeester, Automatic conﬁguration of routing control platforms in OpenFlow networks, ACM SIGCOMM, Vol. 43(4), pp. 491-492, 2013 
  
  
 The other papers using this automatic configuration framework:
